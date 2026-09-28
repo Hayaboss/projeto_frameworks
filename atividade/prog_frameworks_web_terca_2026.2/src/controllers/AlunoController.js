@@ -3,13 +3,49 @@ const alunoService = require("../services/AlunoService");
 class AlunoController{
 
     async findMany(request, response){
-        let {page, pageSize} = request.query;
-        page ||= 1;
-        pageSize ||= 10;
+        try{
+            let {page, pageSize, orderBy, order} = request.query;
+            // aceita também "tipoOrdenacao" como nome alternativo de "order"
+            order ||= request.query.tipoOrdenacao;
 
+            page ||= 1;
+            pageSize ||= 10;
+            orderBy ||= "id";
+            order ||= "asc";
 
-        const alunos = await alunoService.findMany(page, pageSize);
-        return response.status(200).json({alunos});
+            const {alunos, total} = await alunoService.findMany(page, pageSize, orderBy, String(order).toLowerCase());
+            return response.status(200).json({alunos, total});
+        }catch(e){
+            return response.status(e.statusCode || 500).json({error: e.message});
+        }
+    }
+
+    async findUnique(request, response){
+        try{
+            const aluno = await alunoService.findUnique(request.params.id);
+            return response.status(200).json({aluno});
+        }catch(e){
+            return response.status(e.statusCode || 500).json({error: e.message});
+        }
+    }
+
+    async update(request, response){
+        try{
+            const aluno = await alunoService.update(request.params.id, request.body);
+            return response.status(200).json({aluno});
+        }catch(e){
+            return response.status(e.statusCode || 500).json({error: e.message});
+        }
+    }
+
+    async delete(request, response){
+        try{
+            await alunoService.delete(request.params.id);
+            // 204 No Content: remoção bem-sucedida, sem corpo na resposta
+            return response.status(204).send();
+        }catch(e){
+            return response.status(e.statusCode || 500).json({error: e.message});
+        }
     }
 
     async create(request, response){
