@@ -15,4 +15,4 @@ router.put("/:id", validarAlunoUpdate, alunoController.update);
 router.patch("/:id", validarAlunoUpdate, alunoController.update);
 router.delete("/:id", alunoController.delete);
 
-module.exports = router;
+module.exports = router;

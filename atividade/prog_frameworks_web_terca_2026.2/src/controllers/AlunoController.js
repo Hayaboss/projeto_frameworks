@@ -20,6 +20,34 @@ class AlunoController{
         }
     }
 
+    async findUnique(request, response){
+        try{
+            const aluno = await alunoService.findUnique(request.params.id);
+            return response.status(200).json({aluno});
+        }catch(e){
+            return response.status(e.statusCode || 500).json({error: e.message});
+        }
+    }
+
+    async update(request, response){
+        try{
+            const aluno = await alunoService.update(request.params.id, request.body);
+            return response.status(200).json({aluno});
+        }catch(e){
+            return response.status(e.statusCode || 500).json({error: e.message});
+        }
+    }
+
+    async delete(request, response){
+        try{
+            await alunoService.delete(request.params.id);
+            // 204 No Content: remoção bem-sucedida, sem corpo na resposta
+            return response.status(204).send();
+        }catch(e){
+            return response.status(e.statusCode || 500).json({error: e.message});
+        }
+    }
+
     async create(request, response){
         try{
             const aluno = await alunoService.create(request.body);
